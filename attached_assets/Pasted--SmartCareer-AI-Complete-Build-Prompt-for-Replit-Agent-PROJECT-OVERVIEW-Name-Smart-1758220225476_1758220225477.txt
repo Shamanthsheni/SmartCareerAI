@@ -1,0 +1,384 @@
+# SmartCareer AI - Complete Build Prompt for Replit Agent
+
+## 🎯 PROJECT OVERVIEW
+**Name**: SmartCareer AI - One-Stop Personalized Career & Education Advisor  
+**SIH Problem ID**: 25094 (Government of J&K - Higher Education Department)  
+**API Key**: `AIzaSyAYVQneV3Rs2CMCNVKWWrLI96goJ4aC2lA` (Google Gemini)  
+**Goal**: Build a winning SIH 2025 prototype - professional, AI-powered career guidance platform
+
+## 🛠️ TECHNICAL STACK & SETUP
+
+### Required Dependencies
+```json
+{
+  "frontend": [
+    "react@18+",
+    "react-router-dom",
+    "@tailwindcss/forms",
+    "shadcn/ui components",
+    "recharts",
+    "framer-motion",
+    "lucide-react",
+    "axios"
+  ],
+  "backend": [
+    "express",
+    "cors",
+    "@google/generative-ai",
+    "nodemon"
+  ]
+}
+```
+
+### Project Structure
+```
+smartcareer-ai/
+├── client/
+│   ├── src/
+│   │   ├── components/ui/          # shadcn/ui components
+│   │   ├── components/shared/      # reusable components
+│   │   ├── pages/                  # main pages
+│   │   ├── data/                   # mock JSON data
+│   │   ├── services/               # API calls
+│   │   └── utils/                  # helper functions
+├── server/
+│   ├── routes/                     # API endpoints
+│   ├── services/                   # Gemini integration
+│   └── data/                       # mock data files
+└── package.json
+```
+
+## 🚀 IMPLEMENTATION PHASES
+
+### PHASE 1: Foundation Setup (Start Here)
+
+#### 1.1 Initial React Setup
+```bash
+# Create React app with Vite
+npm create vite@latest client -- --template react
+cd client && npm install
+
+# Install required packages
+npm install react-router-dom @tailwindcss/forms recharts framer-motion lucide-react axios
+```
+
+#### 1.2 Tailwind + shadcn/ui Configuration
+```bash
+# Setup Tailwind
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+# Install shadcn/ui
+npx shadcn-ui@latest init
+npx shadcn-ui@latest add button card input textarea select dialog sheet tabs progress
+```
+
+#### 1.3 Express Backend Setup
+```javascript
+// server/index.js - Basic setup
+const express = require('express');
+const cors = require('cors');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const genAI = new GoogleGenerativeAI('AIzaSyAYVQneV3Rs2CMCNVKWWrLI96goJ4aC2lA');
+
+// Start with basic health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'SmartCareer AI Server Running' });
+});
+
+app.listen(3001, () => console.log('🚀 Server running on port 3001'));
+```
+
+### PHASE 2: Core UI Components
+
+#### 2.1 Professional Layout Structure
+Create these components in order:
+
+```jsx
+// components/shared/Layout.jsx - Main layout wrapper
+// components/shared/Sidebar.jsx - Navigation sidebar
+// components/shared/Header.jsx - Top header with user info
+// components/ui/* - shadcn/ui components (auto-generated)
+```
+
+#### 2.2 Landing Page (Priority #1)
+```jsx
+// pages/LandingPage.jsx
+// Requirements:
+// - Hero section with animated text
+// - Career journey visualization using Recharts
+// - Call-to-action buttons with Framer Motion
+// - Responsive grid showcasing key features
+// - "Start My Career Journey" prominent button
+```
+
+#### 2.3 Authentication Mock System
+```jsx
+// components/auth/RoleSelector.jsx
+// Three roles: Student, Parent, Admin
+// Store in localStorage, no real authentication needed
+// Just role switching for demo purposes
+```
+
+### PHASE 3: Student Dashboard (Core Feature)
+
+#### 3.1 Dashboard Overview
+```jsx
+// pages/student/StudentDashboard.jsx
+// Components needed:
+// - ProfileCard (name, class, interests)
+// - QuickStats (quizzes taken, recommendations)
+// - RecentActivity feed
+// - NextSteps suggestions
+```
+
+#### 3.2 Smart Career Quiz
+```jsx
+// pages/student/CareerQuiz.jsx
+// CRITICAL: This is your main demo feature
+// Requirements:
+// - 15-20 adaptive questions
+// - Progress bar with smooth animations
+// - Real-time AI analysis of text responses
+// - Multiple question types: text, multiple choice, sliders
+// - Gemini API integration for instant insights
+```
+
+**Gemini Integration Example**:
+```javascript
+// services/geminiService.js
+export const analyzeQuizResponse = async (question, answer, userContext) => {
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  
+  const prompt = `
+  Analyze this career assessment response from a ${userContext.class} student in J&K:
+  
+  Question: "${question}"
+  Answer: "${answer}"
+  
+  Provide JSON response:
+  {
+    "interests": ["interest1", "interest2"],
+    "careerSuggestions": ["career1", "career2"],
+    "personalityTraits": ["trait1", "trait2"],
+    "analysis": "brief explanation",
+    "confidenceScore": 0.85
+  }
+  `;
+  
+  const result = await model.generateContent(prompt);
+  return JSON.parse(result.response.text());
+};
+```
+
+#### 3.3 AI-Powered Recommendations
+```jsx
+// pages/student/Recommendations.jsx
+// Display career matches with:
+// - Match percentage (calculated by AI)
+// - Career description and requirements
+// - Education pathway visualization
+// - Government vs private opportunities
+// - Salary projections (Recharts)
+// - "View Roadmap" buttons
+```
+
+#### 3.4 Interactive Career Roadmap
+```jsx
+// components/career/CareerRoadmap.jsx
+// Use Recharts timeline/area chart
+// Show progression: 12th → Graduation → Jobs → Growth
+// Interactive nodes with detailed information
+// Government exam pathways highlighted
+```
+
+### PHASE 4: College Directory & Search
+
+#### 4.1 Mock College Data
+Create comprehensive JSON file:
+```json
+// data/jk-colleges.json
+[
+  {
+    "id": "gc_srinagar_01",
+    "name": "Government College for Women, Srinagar",
+    "type": "Government",
+    "location": {
+      "district": "Srinagar",
+      "coordinates": [34.0837, 74.7973],
+      "distance_from_user": "5 km"
+    },
+    "courses": [
+      {
+        "name": "B.A. English Literature",
+        "duration": "3 years",
+        "annual_fees": 8000,
+        "seats_total": 60,
+        "seats_available": 23,
+        "cutoff_percentage": 75,
+        "medium": "English"
+      }
+    ],
+    "facilities": ["Library", "Computer Lab", "Hostel", "Sports Ground"],
+    "ratings": {
+      "infrastructure": 4.2,
+      "faculty": 4.0,
+      "placement": 3.8,
+      "overall": 4.0
+    },
+    "placement_stats": {
+      "placement_rate": 65,
+      "average_package": 350000,
+      "top_recruiters": ["J&K Govt", "Private Companies"]
+    }
+  }
+]
+```
+
+#### 4.2 College Search & Filter
+```jsx
+// pages/colleges/CollegeDirectory.jsx
+// Features:
+// - Advanced filtering (location, fees, courses, ratings)
+// - Search with autocomplete
+// - College comparison (side by side)
+// - Map view integration (optional)
+// - Favorites system (localStorage)
+```
+
+### PHASE 5: AI Chat Counselor
+
+#### 5.1 Intelligent Chat Interface
+```jsx
+// components/chat/AICounselor.jsx
+// Requirements:
+// - Real-time chat with Gemini API
+// - Context-aware responses about J&K opportunities
+// - Quick question suggestions
+// - Typing indicators and smooth animations
+// - Chat history persistence (localStorage)
+```
+
+**Chat Integration**:
+```javascript
+// services/chatService.js
+export const getChatResponse = async (message, userContext) => {
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  
+  const prompt = `
+  You are a career counselor for students in Jammu & Kashmir. Respond helpfully to:
+  "${message}"
+  
+  User context: ${JSON.stringify(userContext)}
+  
+  Focus on:
+  - J&K specific opportunities
+  - Government college recommendations
+  - Realistic career advice
+  - Encouraging and supportive tone
+  
+  Keep response under 200 words and actionable.
+  `;
+  
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+};
+```
+
+### PHASE 6: Parent & Admin Dashboards
+
+#### 6.1 Parent Dashboard
+```jsx
+// pages/parent/ParentDashboard.jsx
+// Features:
+// - Student progress overview
+// - Career recommendation summary
+// - Financial planning tools (college fees, scholarships)
+// - Parent resources ("Why graduation matters")
+// - Communication with school counselors
+```
+
+#### 6.2 Admin Dashboard
+```jsx
+// pages/admin/AdminDashboard.jsx
+// Analytics and insights:
+// - Quiz completion stats (Recharts)
+// - Popular career choices by district
+// - College enrollment trends
+// - Student success stories
+// - System usage metrics
+```
+
+### PHASE 7: Polish & Optimization
+
+#### 7.1 Professional UI Enhancements
+- Consistent color scheme (blue-white gradient theme)
+- Smooth page transitions with Framer Motion
+- Loading states and skeleton screens
+- Toast notifications for actions
+- Progressive Web App features
+
+#### 7.2 Mobile Responsiveness
+- Test on mobile viewport
+- Touch-friendly interactions
+- Optimized navigation for small screens
+- Fast loading with code splitting
+
+#### 7.3 Demo Data & Scenarios
+Create realistic demo scenarios:
+- "Priya from Kupwara" - wants journalism
+- "Arjun from Jammu" - confused between engineering/arts
+- "Fatima from Baramulla" - interested in civil services
+
+## 🎯 CRITICAL SUCCESS FACTORS
+
+### Must-Have for Demo
+1. **Working Quiz** with real Gemini API responses
+2. **Visual Career Roadmaps** using Recharts
+3. **Functional Chat Bot** with contextual responses
+4. **Professional UI** that looks competition-ready
+5. **Role-based Navigation** (Student/Parent/Admin views)
+
+### API Endpoints to Build
+```javascript
+// Essential endpoints:
+POST /api/quiz-analysis    // Analyze quiz responses
+POST /api/career-recommendations  // Get personalized careers
+POST /api/chat-message     // Chat with AI counselor
+GET /api/colleges          // Search colleges
+POST /api/generate-roadmap // Create career roadmap
+```
+
+### Environment Setup
+```javascript
+// .env file
+VITE_GEMINI_API_KEY=AIzaSyAYVQneV3Rs2CMCNVKWWrLI96goJ4aC2lA
+VITE_APP_NAME="SmartCareer AI"
+NODE_ENV=development
+```
+
+## 🏆 FINAL DELIVERABLE CHECKLIST
+
+- [ ] Professional landing page with animations
+- [ ] Complete student dashboard with working quiz
+- [ ] AI-powered career recommendations
+- [ ] Interactive career roadmaps (Recharts)
+- [ ] College directory with search/filter
+- [ ] Working AI chat counselor
+- [ ] Parent and admin dashboards
+- [ ] Mobile-responsive design
+- [ ] Smooth animations throughout
+- [ ] Demo-ready with sample data
+- [ ] All Gemini API integrations working
+- [ ] Clean, maintainable code structure
+
+## 🚀 BUILD INSTRUCTION
+
+**Start by creating the project structure, then implement components in the exact order listed above. Focus on getting the Student Dashboard and Quiz system working first, as these are the core demo features. Ensure every component is professional-looking and the AI integrations are functional.**
+
+Build this as a complete, production-ready application that showcases the full potential of AI-powered career guidance for J&K students.
